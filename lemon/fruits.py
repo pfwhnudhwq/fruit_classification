@@ -10,6 +10,7 @@ class fruits(Enum):
     fruits enum
     '''
     lemon=1
+    apple=2
 
 class lemon_status(Enum):
     '''
@@ -21,4 +22,10 @@ class lemon_status(Enum):
     second=2
     third=3
     rubbish=4
+
+class apple_status(Enum):
+    '''
+    apple status
+    '''
+    error=-1
 
