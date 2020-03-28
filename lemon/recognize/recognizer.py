@@ -10,6 +10,6 @@ class recognizer(object):
     def __init__(self):
         pass
     @abstractmethod
-    def recognize(self):
+    def recognize(self,data,config):
         pass
 
