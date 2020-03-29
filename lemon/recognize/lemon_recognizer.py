@@ -93,3 +93,9 @@ class lemon_recognizer(recognizer):
         #cv2.destroyAllWindows()
         return result
 
+class dl_lemon_recognizer(recognizer):
+    def __init__(self):
+        pass
+    def recognize(self,data,config):
+        result=[]
+        return result

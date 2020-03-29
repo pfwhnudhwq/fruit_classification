@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 from enum import Enum
 from fruits import fruits,lemon_status
 from recognizer import recognizer
-from lemon_recognizer import lemon_recognizer
+from lemon_recognizer import *
 
 import cv2
 import numpy as np
@@ -30,7 +30,7 @@ class deeplearning_factory(object):
     def create_recognizer(self,fruit_name):
         result=recognizer()
         if fruit_name==fruits.lemon:
-            result=lemon_recognizer()
+            result=dl_lemon_recognizer()
         else:
             print("no such recognizer!")
         return result
