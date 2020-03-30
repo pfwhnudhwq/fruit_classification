@@ -1,0 +1,16 @@
+app_config: {}
+data_config: {datapath: ../lemon_pic}
+gui_config: {height: 640, width: 800}
+img_config:
+  fruit: lemon
+  height: 185
+  points:
+  - !!python/tuple [16, 95]
+  - !!python/tuple [171, 95]
+  - !!python/tuple [326, 95]
+  - !!python/tuple [481, 95]
+  - !!python/tuple [636, 95]
+  - !!python/tuple [791, 95]
+  - !!python/tuple [946, 95]
+  - !!python/tuple [1101, 95]
+  width: 145

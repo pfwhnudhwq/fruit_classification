@@ -4,7 +4,6 @@
 # Created Time: 2020年02月29日 星期六 21时47分08秒
 from abc import ABCMeta, abstractmethod
 from enum import Enum
-from fruits import fruits,lemon_status
 from recognizer import recognizer
 from lemon_recognizer import *
 
@@ -17,7 +16,7 @@ class recognizer_factory(object):
     '''
     def create_recognizer(self,fruit_name):
         result=recognizer()
-        if fruit_name==fruits.lemon:
+        if fruit_name=='lemon':
             result=lemon_recognizer()
         else:
             print("no such recognizer!")
@@ -29,7 +28,7 @@ class deeplearning_factory(object):
     '''
     def create_recognizer(self,fruit_name):
         result=recognizer()
-        if fruit_name==fruits.lemon:
+        if fruit_name=='lemon':
             result=dl_lemon_recognizer()
         else:
             print("no such recognizer!")

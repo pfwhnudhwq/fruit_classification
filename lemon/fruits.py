@@ -4,14 +4,6 @@
 # Created Time: 2020年03月01日 星期日 13时53分10秒
 
 from enum import Enum
-
-class fruits(Enum):
-    '''
-    fruits enum
-    '''
-    lemon=1
-    apple=2
-
 class lemon_status(Enum):
     '''
     lemon status

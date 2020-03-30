@@ -3,7 +3,7 @@
 # Author: xuchaoqian
 # Created Time: 2020年02月29日 星期六 21时47分08秒
 from abc import ABCMeta, abstractmethod
-from fruits import fruits,lemon_status
+from fruits import lemon_status
 from recognizer import recognizer
 import cv2
 import numpy as np
@@ -26,12 +26,12 @@ class lemon_recognizer(recognizer):
         self.vmax=255
         self.countThresh=1000
     def recognize(self,data,config):
-        numRegion=len(config.points)
+        numRegion=len(config['points'])
         if (numRegion<1):
             return
         resultList=[]
-        for point in config.points:
-            roi=data[point[1]:point[1]+config.height,point[0]:point[0]+config.width,:]
+        for point in config['points']:
+            roi=data[point[1]:point[1]+config['height'],point[0]:point[0]+config['width'],:]
             result=self.recognize_roi(roi)
             resultList.append(result.value)
         return resultList
