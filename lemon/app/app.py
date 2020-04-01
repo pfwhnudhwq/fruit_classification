@@ -18,19 +18,15 @@ class App(object):
     '''
     def __init__(self):
         self.processes=[]
-        print("%s app init..."%type(self).__name__)
     def start(self,args=()):
-        print("%s app start..."%type(self).__name__)
         process=Process(target=self.callback,args=args)
         self.processes.append(process)
         process.start()
     def join(self):
-        print("wait for %s to complete"%type(self).__name__)
         for process in self.processes:
             process.join()
         self.processes=[]
     def stop(self):
-        print("%s app stop..."%type(self).__name__)
         for process in self.processes:
             process.terminate()
         self.processes=[]
