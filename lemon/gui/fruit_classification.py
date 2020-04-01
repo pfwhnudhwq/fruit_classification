@@ -5,6 +5,8 @@
 
 from Tkinter import *
 from app import *
+from ttk import Notebook
+from tabs import lemon_tab
 
 class Main_gui:
     def __init__(self,config):
@@ -13,6 +15,7 @@ class Main_gui:
         self.app=Main_app(config)
         #init gui
         self.root=Tk()
+        self.tabs=lemon_tab(config)
         self.width=self.config['width']
         self.height=self.config['height']
         self.init_gui()
@@ -24,22 +27,12 @@ class Main_gui:
         self.init_menu()
         #compoent
         self.init_compoent()
-        #fm = Frame(self.root)
-        #Button(fm, text='Top').pack(side=TOP, anchor=W, fill=X, expand=YES)
-        #Button(fm, text='Center').pack(side=TOP, anchor=W, fill=X, expand=YES)
-        #Button(fm, text='Bottom').pack(side=TOP, anchor=W, fill=X, expand=YES)
-        #fm.pack(side=LEFT, fill=BOTH, expand=YES)
-
-        #fm2 = Frame(self.root)
-        #Button(fm2, text='Left').pack(side=LEFT)
-        #Button(fm2, text='This is the Center button').pack(side=LEFT)
-        #Button(fm2, text='Right',command=self.app.start).pack(side=LEFT)        
-        #fm2.pack(side=LEFT, padx=10)
 
     def init_main_window(self):
         self.root.title("fruit classification")
         self.root.geometry(str(self.width)+"x"+str(self.height))
         self.root.resizable(width=False,height=False)
+
     def init_menu(self):
         menubar=Menu(self.root)
         menu_file=Menu(menubar,tearoff=False)
@@ -52,6 +45,7 @@ class Main_gui:
             menu_edit.add_command(label=item,command=self.quit)
         menubar.add_cascade(label='edit',menu=menu_edit)
         self.root.config(menu=menubar)
+
     def init_compoent(self):
         #status
         fm_status=Frame(self.root)
@@ -74,14 +68,28 @@ class Main_gui:
         fm_status.pack(side=TOP,fill=BOTH)
         #buttons
         fm_buttons=Frame(self.root)
-        Button(fm_buttons,text="start").pack(side=LEFT,expand=YES,anchor=E)
-        Button(fm_buttons,text="stop").pack(side=LEFT,expand=YES,anchor=W)
+        Button(fm_buttons,text="start",command=self.start).pack(side=LEFT,expand=YES,anchor=E)
+        Button(fm_buttons,text="stop",command=self.stop).pack(side=LEFT,expand=YES,anchor=W)
         fm_buttons.pack(side=TOP,fill=BOTH,pady=10)
-        #tag
+        #tab
+        fm_tab=Frame(self.root)
+        tabControl=Notebook(fm_tab)
+        self.tabs.set_tabs(tabControl)
+        tabControl.pack(side=TOP,expand=YES,fill=BOTH)
+        fm_tab.pack(side=TOP,expand=YES,fill=BOTH)
         #quit
+        fm_quit=Frame(self.root)
+        Button(fm_quit,text="save").pack(side=RIGHT)
+        Button(fm_quit,text="reset").pack(side=RIGHT)
+        fm_quit.pack(side=TOP,fill=BOTH,pady=10)
 
+    def start(self):
+        self.app.start()
+    def stop(self):
+        self.app.stop()
     def show(self):
         self.root.mainloop()
+
     def quit(self):
         self.app.stop()
         self.root.quit()

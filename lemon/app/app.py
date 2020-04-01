@@ -72,11 +72,11 @@ class Main_app(App):
             print self.dl_output.get()
             print self.imgpro_output.get()
     def stop(self):
-        self.con[0].close()
-        self.con[1].close()
         self.dl_app.stop()
         self.img_app.stop()
         self.data_app.stop()
+        self.con[0].close()
+        self.con[1].close()
         super(Main_app,self).stop()
 
 class DL_app(App):
