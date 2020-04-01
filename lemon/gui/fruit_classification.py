@@ -84,13 +84,13 @@ class Main_gui:
         fm_quit.pack(side=TOP,fill=BOTH,pady=10)
 
     def start(self):
-        self.app.start()
+        self.app.run_app()
     def stop(self):
-        self.app.stop()
+        self.app.terminate()
     def show(self):
         self.root.mainloop()
 
     def quit(self):
-        self.app.stop()
+        self.app.terminate()
         self.root.quit()
         

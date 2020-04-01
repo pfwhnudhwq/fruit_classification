@@ -6,6 +6,7 @@
 from config import load_config 
 from gui import Main_gui
 import os
+from app import *
 
 if __name__=="__main__":
     config_path="yaml/config.yaml"

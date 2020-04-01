@@ -1,111 +1,90 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 # Author: xuchaoqian
-# Created Time: 2020年02月29日 星期六 21时59分34秒
-
-from recognize import recognizer_factory,deeplearning_factory
-from abc import ABCMeta,abstractmethod
+# Created Time: 2020年04月01日 星期三 16时20分42秒
 from multiprocessing import Process,Pipe,Queue
-from fruits import *
-
-import os
 import cv2
+import os
 import time
+from recognize import recognizer_factory,deeplearning_factory
 
-class App(object):
-    '''
-    app parent
-    '''
-    def __init__(self):
-        self.processes=[]
-    def start(self,args=()):
-        process=Process(target=self.callback,args=args)
-        self.processes.append(process)
-        process.start()
-    def join(self):
-        for process in self.processes:
-            process.join()
-        self.processes=[]
-    def stop(self):
-        for process in self.processes:
-            process.terminate()
-        self.processes=[]
-    @abstractmethod
-    def callback(self):
-       print("%s app has no function to execution!"%type(self).__name__)
-
-class Data_app(App):
-    '''
-    data reader
-    '''
-    def __init__(self,config):
-        super(Data_app,self).__init__()
+class Data_app(Process):
+    def __init__(self,config,cons):
+        Process.__init__(self)
         self.config=config
+        self.cons=cons
         self.data_path=config['datapath']
-    def callback(self,con):
+    def run(self):
         for file_name in os.listdir(self.data_path):
             file_path=os.path.join(self.data_path,file_name)
             image_data=cv2.imread(file_path)
-            con[0].send(image_data)
-            con[1].send(image_data)
+            [con.send(image_data) for con in self.cons]
             time.sleep(1)
+    def terminate(self):
+        [con.send(None) for con in self.cons]
+        [con.close for con in self.cons]
+        Process.terminate(self)
 
-class Main_app(App):
-    '''
-    main application.
-    '''
-    def __init__(self,config):
-        super(Main_app,self).__init__()
+class DL_app(Process):
+    def __init__(self,config,con,q):
+        Process.__init__(self)
         self.config=config
-        self.data_app=Data_app(config['data_config'])
-        self.dl_app=DL_app(config['img_config'])
-        self.img_app=Imgpro_app(config['img_config'])
-        self.con=Pipe()
+        self.con=con
+        self.q=q
+        self.factory=deeplearning_factory()
+        self.recognizer=self.factory.create_recognizer(config['fruit'])
+    def run(self):
+        while not self.con.closed:
+            data=self.con.recv()
+            if data is None:
+                return
+            result=self.recognizer.recognize(data,self.config)
+            self.q.put(result)
+    def terminate(self):
+        self.con.close()
+        Process.terminate(self)
+
+class Imgpro_app(Process):
+    def __init__(self,config,con,q):
+        Process.__init__(self)
+        self.config=config
+        self.con=con
+        self.q=q
+        self.factory=recognizer_factory()
+        self.recognizer=self.factory.create_recognizer(config['fruit'])
+    def run(self):
+        while not self.con.closed:
+            data=self.con.recv()
+            if data is None:
+                return
+            result=self.recognizer.recognize(data,self.config)
+            self.q.put(result)
+    def terminate(self):
+        self.con.close()
+        Process.terminate(self)
+
+class Main_app(Process):
+    def __init__(self,config):
+        Process.__init__(self)
+        self.config=config
+        self.con1=Pipe(duplex=False)
+        self.con2=Pipe(duplex=False)
         self.dl_output=Queue()
         self.imgpro_output=Queue()
-    def callback(self):
-        self.dl_app.start((self.con,self.dl_output))
-        self.img_app.start((self.con,self.imgpro_output))
-        self.data_app.start((self.con,))
-        #merge result
+        self.data_app=Data_app(self.config['data_config'],[self.con1[1],self.con2[1]])
+        self.dl_app=DL_app(self.config['img_config'],self.con1[0],self.dl_output)
+        self.img_app=Imgpro_app(self.config['img_config'],self.con2[0],self.imgpro_output)
+    def run_app(self):
+        self.dl_app.start()
+        self.img_app.start()
+        self.data_app.start()
+        self.start()
+    def run(self):
         while True:
             print self.dl_output.get()
             print self.imgpro_output.get()
-    def stop(self):
-        self.dl_app.stop()
-        self.img_app.stop()
-        self.data_app.stop()
-        self.con[0].close()
-        self.con[1].close()
-        super(Main_app,self).stop()
-
-class DL_app(App):
-    '''
-    deep learning application
-    '''
-    def __init__(self,config):
-        super(DL_app,self).__init__()
-        self.config=config
-        self.factory=deeplearning_factory()
-        self.recognizer=self.factory.create_recognizer(config['fruit'])
-    def callback(self,con,q):
-        while not con[0].closed:
-            data=con[0].recv()
-            result=self.recognizer.recognize(data,self.config)
-            q.put(result)
-
-class Imgpro_app(App):
-    '''
-    image processing app.
-    '''
-    def __init__(self,config):
-        super(Imgpro_app,self).__init__()
-        self.config=config
-        self.factory=recognizer_factory()
-        self.recognizer=self.factory.create_recognizer(config['fruit'])
-    def callback(self,con,q):
-        while not con[1].closed:
-            data=con[1].recv()
-            result=self.recognizer.recognize(data,self.config)
-            q.put(result)
-
+    def terminate(self):
+        self.data_app.terminate()
+        self.dl_app.terminate()
+        self.img_app.terminate()
+        Process.terminate(self)
