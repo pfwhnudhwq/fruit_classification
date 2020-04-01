@@ -9,6 +9,9 @@ import time
 from recognize import recognizer_factory,deeplearning_factory
 
 class Data_app(Process):
+    '''
+    load data
+    '''
     def __init__(self,config,cons):
         Process.__init__(self)
         self.config=config
@@ -21,11 +24,14 @@ class Data_app(Process):
             [con.send(image_data) for con in self.cons]
             time.sleep(1)
     def terminate(self):
-        [con.send(None) for con in self.cons]
+        #[con.send(None) for con in self.cons]
         [con.close for con in self.cons]
         Process.terminate(self)
 
 class DL_app(Process):
+    '''
+    app for deep learning
+    '''
     def __init__(self,config,con,q):
         Process.__init__(self)
         self.config=config
@@ -45,6 +51,9 @@ class DL_app(Process):
         Process.terminate(self)
 
 class Imgpro_app(Process):
+    '''
+    app for image processing
+    '''
     def __init__(self,config,con,q):
         Process.__init__(self)
         self.config=config
@@ -64,6 +73,12 @@ class Imgpro_app(Process):
         Process.terminate(self)
 
 class Main_app(Process):
+    '''
+    main app:
+    data load
+    deep learning 
+    image processing
+    '''
     def __init__(self,config):
         Process.__init__(self)
         self.config=config
