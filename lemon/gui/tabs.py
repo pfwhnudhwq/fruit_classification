@@ -25,5 +25,8 @@ class lemon_tab:
         tab_weight=Frame(root,bg='black')
         root.add(tab_weight,text='weight')
         self.tabs=[tab_defect,tab_volume,tab_weight]
+    def update(self):
+        for tab in self.tabs:
+            pass
     def set_value(self):
         pass

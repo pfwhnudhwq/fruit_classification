@@ -1,6 +1,9 @@
 app_config: {}
 data_config: {datapath: ../lemon_pic}
-gui_config: {height: 640, width: 800}
+gui_config:
+  fruit_list: [lemon, apple, passion]
+  height: 640
+  width: 1280
 img_config:
   fruit: lemon
   height: 185

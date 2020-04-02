@@ -17,8 +17,9 @@ if __name__=="__main__":
     #gui
     result={}
     gui_config={
-            'width':800,
+            'width':1280,
             'height':640,
+            'fruit_list':['lemon','apple','passion']
             }
     #application config
     app_config={

@@ -42,9 +42,9 @@ class Main_gui:
     def init_menu(self):
         menubar=Menu(self.root)
         menu_file=Menu(menubar,tearoff=False)
-        for item in ['fuck','quit']:
+        for item in self.config['gui_config']['fruit_list']:
             menu_file.add_command(label=item,command=None)
-        menubar.add_cascade(label='file',menu=menu_file)
+        menubar.add_cascade(label='fruit',menu=menu_file)
 
         menu_edit=Menu(menubar,tearoff=False)
         for item in ['fuck','quit']:
@@ -55,29 +55,24 @@ class Main_gui:
     def init_compoent(self):
         #status
         fm_status=Frame(self.root)
-        fm_status_1=Frame(fm_status)
-        self.str_obj=StringVar()
-        self.str_obj.set("fruit:")
-        Label(fm_status_1,textvariable=self.str_obj).pack(side=TOP,expand=YES,anchor=W)
-        Label(fm_status_1,text="status:").pack(side=TOP,expand=YES,anchor=W)
-        fm_status_2=Frame(fm_status)
-        Label(fm_status_2,text="fruit:").pack(side=TOP,expand=YES,anchor=W)
-        Label(fm_status_2,text="status:").pack(side=TOP,expand=YES,anchor=W)
-        fm_status_3=Frame(fm_status)
-        Label(fm_status_3,text="fruit:").pack(side=TOP,expand=YES,anchor=W)
-        Label(fm_status_3,text="status:").pack(side=TOP,expand=YES,anchor=W)
-        fm_status_4=Frame(fm_status)
-        Label(fm_status_4,text="fruit:").pack(side=TOP,expand=YES,anchor=W)
-        Label(fm_status_4,text="status:").pack(side=TOP,expand=YES,anchor=W)
-        fm_status_1.pack(side=LEFT,expand=YES,anchor=W)
-        fm_status_2.pack(side=LEFT,expand=YES,anchor=W)
-        fm_status_3.pack(side=LEFT,expand=YES,anchor=W)
-        fm_status_4.pack(side=LEFT,expand=YES,anchor=W)
+        self.label_fruit_list=[]
+        self.label_status_list=[]
+        for i in range(len(self.config['img_config']['points'])):
+            fm_tmp=Frame(fm_status)
+            label_fruit=Label(fm_tmp,text="fruit:")
+            label_status=Label(fm_tmp,text="status:")
+            label_fruit.pack(side=TOP,expand=YES,anchor=W)
+            label_status.pack(side=TOP,expand=YES,anchor=W)
+            fm_tmp.pack(side=LEFT,expand=YES,anchor=W)
+            self.label_fruit_list.append(label_fruit)
+            self.label_status_list.append(label_status)
         fm_status.pack(side=TOP,fill=BOTH)
         #buttons
         fm_buttons=Frame(self.root)
-        Button(fm_buttons,text="start",command=self.start).pack(side=LEFT,expand=YES,anchor=E)
-        Button(fm_buttons,text="stop",command=self.stop).pack(side=LEFT,expand=YES,anchor=W)
+        self.btn_start=Button(fm_buttons,text="start",command=self.start)
+        self.btn_stop=Button(fm_buttons,text="stop",state=DISABLED,command=self.stop)
+        self.btn_start.pack(side=LEFT,expand=YES,anchor=E)
+        self.btn_stop.pack(side=LEFT,expand=YES,anchor=W)
         fm_buttons.pack(side=TOP,fill=BOTH,pady=10)
         #tab
         fm_tab=Frame(self.root)
@@ -93,14 +88,24 @@ class Main_gui:
 
     def update(self,result):
         #update gui
-        self.str_obj.set(result)
+        #update status
+        fruit_label="fruit:"+self.config['img_config']['fruit']
+        for i in range(len(self.config['img_config']['points'])):
+            self.label_fruit_list[i].config(text=fruit_label)
+            self.label_status_list[i].config(text="status:"+str(result[i]))
+        #update tabs
+        self.tabs.update()
     def start(self):
         if not (self.app._popen is None):
             self.app.terminate()
             self.app=Main_app(self.config,self.output)
         self.app.run_app()
+        self.btn_start.config(state=DISABLED)
+        self.btn_stop.config(state=NORMAL)
     def stop(self):
         self.app.terminate()
+        self.btn_start.config(state=NORMAL)
+        self.btn_stop.config(state=DISABLED)
     def show(self):
         self.root.mainloop()
     def quit(self):
