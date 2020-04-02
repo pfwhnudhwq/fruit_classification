@@ -42,8 +42,6 @@ class DL_app(Process):
     def run(self):
         while not self.con.closed:
             data=self.con.recv()
-            if data is None:
-                return
             result=self.recognizer.recognize(data,self.config)
             self.q.put(result)
     def terminate(self):
@@ -64,8 +62,6 @@ class Imgpro_app(Process):
     def run(self):
         while not self.con.closed:
             data=self.con.recv()
-            if data is None:
-                return
             result=self.recognizer.recognize(data,self.config)
             self.q.put(result)
     def terminate(self):
@@ -90,16 +86,24 @@ class Main_app(Process):
         self.dl_app=DL_app(self.config['img_config'],self.con1[0],self.dl_output)
         self.img_app=Imgpro_app(self.config['img_config'],self.con2[0],self.imgpro_output)
     def run_app(self):
-        self.dl_app.start()
-        self.img_app.start()
-        self.data_app.start()
-        self.start()
+        if not (self.dl_app.is_alive()):
+            self.dl_app.start()
+        if not (self.img_app.is_alive()):
+            self.img_app.start()
+        if not (self.data_app.is_alive()):
+            self.data_app.start()
+        if not (self.is_alive()):
+            self.start()
     def run(self):
         while True:
             print self.dl_output.get()
             print self.imgpro_output.get()
     def terminate(self):
-        self.data_app.terminate()
-        self.dl_app.terminate()
-        self.img_app.terminate()
-        Process.terminate(self)
+        if (self.data_app.is_alive()):
+            self.data_app.terminate()
+        if (self.dl_app.is_alive()):
+            self.dl_app.terminate()
+        if (self.img_app.is_alive()):
+            self.img_app.terminate()
+        if (self.is_alive()):
+            Process.terminate(self)

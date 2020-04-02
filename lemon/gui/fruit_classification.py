@@ -10,14 +10,14 @@ from tabs import lemon_tab
 
 class Main_gui:
     def __init__(self,config):
-        self.config=config['gui_config']
+        self.config=config
         #load gui according configuration
         self.app=Main_app(config)
         #init gui
         self.root=Tk()
         self.tabs=lemon_tab(config)
-        self.width=self.config['width']
-        self.height=self.config['height']
+        self.width=self.config['gui_config']['width']
+        self.height=self.config['gui_config']['height']
         self.init_gui()
 
     def init_gui(self):
@@ -87,6 +87,7 @@ class Main_gui:
         self.app.run_app()
     def stop(self):
         self.app.terminate()
+        self.app=Main_app(self.config)
     def show(self):
         self.root.mainloop()
 
