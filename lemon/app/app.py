@@ -3,6 +3,7 @@
 # Author: xuchaoqian
 # Created Time: 2020年04月01日 星期三 16时20分42秒
 from multiprocessing import Process,Pipe,Queue
+from threading import Thread
 import cv2
 import os
 import time
@@ -75,7 +76,7 @@ class Main_app(Process):
     deep learning 
     image processing
     '''
-    def __init__(self,config):
+    def __init__(self,config,q):
         Process.__init__(self)
         self.config=config
         self.con1=Pipe(duplex=False)
@@ -85,6 +86,7 @@ class Main_app(Process):
         self.data_app=Data_app(self.config['data_config'],[self.con1[1],self.con2[1]])
         self.dl_app=DL_app(self.config['img_config'],self.con1[0],self.dl_output)
         self.img_app=Imgpro_app(self.config['img_config'],self.con2[0],self.imgpro_output)
+        self.output=q
     def run_app(self):
         if not (self.dl_app.is_alive()):
             self.dl_app.start()
@@ -96,8 +98,11 @@ class Main_app(Process):
             self.start()
     def run(self):
         while True:
-            print self.dl_output.get()
-            print self.imgpro_output.get()
+            dl_result=self.dl_output.get()
+            img_result=self.imgpro_output.get()
+            #merge result
+            self.output.put(img_result)
+            #send control 
     def terminate(self):
         if (self.data_app.is_alive()):
             self.data_app.terminate()
@@ -107,3 +112,16 @@ class Main_app(Process):
             self.img_app.terminate()
         if (self.is_alive()):
             Process.terminate(self)
+
+class update_gui_app(Thread):
+    '''
+    update gui
+    '''
+    def __init__(self,func,q):
+        Thread.__init__(self)
+        self.func=func
+        self.q=q
+    def run(self):
+        while True:
+            result=self.q.get()
+            self.func(result)

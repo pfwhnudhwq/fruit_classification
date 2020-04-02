@@ -7,12 +7,18 @@ from Tkinter import *
 from app import *
 from ttk import Notebook
 from tabs import lemon_tab
+from multiprocessing import Queue
 
 class Main_gui:
     def __init__(self,config):
         self.config=config
         #load gui according configuration
-        self.app=Main_app(config)
+        self.output=Queue()
+        self.app=Main_app(config,self.output)
+        #update gui thread
+        self.update_app=update_gui_app(self.update,self.output)
+        self.update_app.setDaemon(True)
+        self.update_app.start()
         #init gui
         self.root=Tk()
         self.tabs=lemon_tab(config)
@@ -50,17 +56,19 @@ class Main_gui:
         #status
         fm_status=Frame(self.root)
         fm_status_1=Frame(fm_status)
-        Label(fm_status_1,text="fruit:").pack(side=TOP,fill=BOTH,anchor=W)
-        Label(fm_status_1,text="status:").pack(side=TOP,fill=BOTH,anchor=W)
+        self.str_obj=StringVar()
+        self.str_obj.set("fruit:")
+        Label(fm_status_1,textvariable=self.str_obj).pack(side=TOP,expand=YES,anchor=W)
+        Label(fm_status_1,text="status:").pack(side=TOP,expand=YES,anchor=W)
         fm_status_2=Frame(fm_status)
-        Label(fm_status_2,text="fruit:").pack(side=TOP,fill=BOTH,anchor=W)
-        Label(fm_status_2,text="status:").pack(side=TOP,fill=BOTH,anchor=W)
+        Label(fm_status_2,text="fruit:").pack(side=TOP,expand=YES,anchor=W)
+        Label(fm_status_2,text="status:").pack(side=TOP,expand=YES,anchor=W)
         fm_status_3=Frame(fm_status)
-        Label(fm_status_3,text="fruit:").pack(side=TOP,fill=BOTH,anchor=W)
-        Label(fm_status_3,text="status:").pack(side=TOP,fill=BOTH,anchor=W)
+        Label(fm_status_3,text="fruit:").pack(side=TOP,expand=YES,anchor=W)
+        Label(fm_status_3,text="status:").pack(side=TOP,expand=YES,anchor=W)
         fm_status_4=Frame(fm_status)
-        Label(fm_status_4,text="fruit:").pack(side=TOP,fill=BOTH,anchor=W)
-        Label(fm_status_4,text="status:").pack(side=TOP,fill=BOTH,anchor=W)
+        Label(fm_status_4,text="fruit:").pack(side=TOP,expand=YES,anchor=W)
+        Label(fm_status_4,text="status:").pack(side=TOP,expand=YES,anchor=W)
         fm_status_1.pack(side=LEFT,expand=YES,anchor=W)
         fm_status_2.pack(side=LEFT,expand=YES,anchor=W)
         fm_status_3.pack(side=LEFT,expand=YES,anchor=W)
@@ -73,9 +81,9 @@ class Main_gui:
         fm_buttons.pack(side=TOP,fill=BOTH,pady=10)
         #tab
         fm_tab=Frame(self.root)
-        tabControl=Notebook(fm_tab)
-        self.tabs.set_tabs(tabControl)
-        tabControl.pack(side=TOP,expand=YES,fill=BOTH)
+        self.tabControl=Notebook(fm_tab)
+        self.tabs.set_tabs(self.tabControl)
+        self.tabControl.pack(side=TOP,expand=YES,fill=BOTH)
         fm_tab.pack(side=TOP,expand=YES,fill=BOTH)
         #quit
         fm_quit=Frame(self.root)
@@ -83,15 +91,19 @@ class Main_gui:
         Button(fm_quit,text="reset").pack(side=RIGHT)
         fm_quit.pack(side=TOP,fill=BOTH,pady=10)
 
+    def update(self,result):
+        #update gui
+        self.str_obj.set(result)
     def start(self):
+        if not (self.app._popen is None):
+            self.app.terminate()
+            self.app=Main_app(self.config,self.output)
         self.app.run_app()
     def stop(self):
         self.app.terminate()
-        self.app=Main_app(self.config)
     def show(self):
         self.root.mainloop()
-
     def quit(self):
-        self.app.terminate()
+        self.stop()
         self.root.quit()
         
