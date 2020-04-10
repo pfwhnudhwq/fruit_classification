@@ -3,10 +3,10 @@
 # Author: xuchaoqian
 # Created Time: 2020年03月30日 星期一 21时27分35秒
 
-from Tkinter import *
+from tkinter import *
+from tkinter.ttk import Notebook
 from app import *
-from ttk import Notebook
-from tabs import lemon_tab
+from .tabs import lemon_tab
 from multiprocessing import Queue
 
 class Main_gui:

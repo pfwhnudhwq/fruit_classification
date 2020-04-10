@@ -3,7 +3,7 @@
 # Author: xuchaoqian
 # Created Time: 2020年04月01日 星期三 13时33分23秒
 
-from Tkinter import *
+from tkinter import *
 
 class lemon_tab:
     def __init__(self,config):

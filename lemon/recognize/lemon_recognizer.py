@@ -4,7 +4,7 @@
 # Created Time: 2020年02月29日 星期六 21时47分08秒
 from abc import ABCMeta, abstractmethod
 from fruits import lemon_status
-from recognizer import recognizer
+from .recognizer import recognizer
 import cv2
 import numpy as np
 

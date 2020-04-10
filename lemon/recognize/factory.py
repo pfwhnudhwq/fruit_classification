@@ -4,8 +4,8 @@
 # Created Time: 2020年02月29日 星期六 21时47分08秒
 from abc import ABCMeta, abstractmethod
 from enum import Enum
-from recognizer import recognizer
-from lemon_recognizer import *
+from .recognizer import recognizer
+from .lemon_recognizer import *
 
 import cv2
 import numpy as np
