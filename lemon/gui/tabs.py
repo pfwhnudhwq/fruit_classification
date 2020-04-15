@@ -17,13 +17,13 @@ class lemon_tab:
         if not self.tabs is None:
             return
         tab_defect=Frame(root,bg='green')
-        root.add(tab_defect,text='defect')
+        root.add(tab_defect,text='级别')
 
         tab_volume=Frame(root,bg='red')
-        root.add(tab_volume,text='volume')
+        root.add(tab_volume,text='体积')
 
         tab_weight=Frame(root,bg='black')
-        root.add(tab_weight,text='weight')
+        root.add(tab_weight,text='重量')
         self.tabs=[tab_defect,tab_volume,tab_weight]
     def update(self):
         for tab in self.tabs:

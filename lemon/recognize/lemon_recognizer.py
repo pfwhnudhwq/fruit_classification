@@ -34,9 +34,7 @@ class lemon_recognizer(recognizer):
             roi=data[point[1]:point[1]+config['height'],point[0]:point[0]+config['width'],:]
             result=self.recognize_roi(roi)
             resultList.append(result.value)
-        return resultList
-        #cv2.imshow("src",data)
-        #cv2.waitKey(0)
+        return resultList,data
 
     def recognize_roi(self,data):
         #rgb to hsv
@@ -83,8 +81,8 @@ class lemon_recognizer(recognizer):
 
         #show result
         #cv2.drawContours(data,tmpContours,-1,(0,0,255),1)
-        #x,y,w,h = cv2.boundingRect(contours[maxIndex])
-        #cv2.rectangle(data,(x,y),(x+w,y+h),(0,255,0),2)
+        x,y,w,h = cv2.boundingRect(contours[maxIndex])
+        cv2.rectangle(data,(x,y),(x+w,y+h),(0,255,0),2)
         #cv2.putText(data, str(result.value), (x,y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2) 
         #cv2.putText(data,str("%d,%d"%(numDefects,sumArea)),(x,y+h),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
         #cv2.imshow("contours",thresh)

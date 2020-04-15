@@ -3,7 +3,7 @@ data_config: {datapath: ../lemon_pic}
 gui_config:
   fruit_list: [lemon, apple, passion]
   height: 640
-  width: 1280
+  width: 960
 img_config:
   fruit: lemon
   height: 185
@@ -14,6 +14,4 @@ img_config:
   - !!python/tuple [481, 95]
   - !!python/tuple [636, 95]
   - !!python/tuple [791, 95]
-  - !!python/tuple [946, 95]
-  - !!python/tuple [1101, 95]
   width: 145

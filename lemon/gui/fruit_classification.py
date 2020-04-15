@@ -8,6 +8,9 @@ from tkinter.ttk import Notebook
 from app import *
 from .tabs import lemon_tab
 from multiprocessing import Queue
+import cv2
+import numpy as np
+from PIL import Image,ImageTk
 
 class Main_gui:
     def __init__(self,config):
@@ -53,14 +56,38 @@ class Main_gui:
         self.root.config(menu=menubar)
 
     def init_compoent(self):
+        #left frame
+        fm_left=Frame(self.root)
+        fm_left.pack(side=LEFT,fill=BOTH)
+        #ad frame
+        fm_ad=Frame(fm_left)
+        fm_ad.pack(side=TOP,fill=BOTH)
+        Label(fm_ad,text="联系人：曾志华").pack(padx=20,anchor=W)
+        Label(fm_ad,text="联系电话：13973774745").pack(padx=20,anchor=W)
+        #tags frame
+        fm_tags=Frame(fm_left,pady=250)
+        fm_tags.pack(side=TOP,fill=BOTH)
+        Button(fm_tags,width=5,height=1,text="级别",relief=SUNKEN).pack(side=TOP,anchor=E)
+        Button(fm_tags,width=5,height=1,text="重量").pack(side=TOP,anchor=E)
+        Button(fm_tags,width=5,height=1,text="体积").pack(side=TOP,anchor=E)
+        #right frame
+        fm_right=Frame(self.root)
+        fm_right.pack(side=LEFT,fill=BOTH)
+        #image
+        img=np.zeros((200,640),dtype=np.uint8)
+        img=Image.fromarray(img)
+        img=ImageTk.PhotoImage(img)
+        self.label_img=Label(fm_right,image=img)
+        self.label_img.image=img
+        self.label_img.pack(side=TOP)
         #status
-        fm_status=Frame(self.root)
+        fm_status=Frame(fm_right)
         self.label_fruit_list=[]
         self.label_status_list=[]
         for i in range(len(self.config['img_config']['points'])):
             fm_tmp=Frame(fm_status)
-            label_fruit=Label(fm_tmp,text="fruit:")
-            label_status=Label(fm_tmp,text="status:")
+            label_fruit=Label(fm_tmp,text="级别：")
+            label_status=Label(fm_tmp,text="体积：")
             label_fruit.pack(side=TOP,expand=YES,anchor=W)
             label_status.pack(side=TOP,expand=YES,anchor=W)
             fm_tmp.pack(side=LEFT,expand=YES,anchor=W)
@@ -68,33 +95,37 @@ class Main_gui:
             self.label_status_list.append(label_status)
         fm_status.pack(side=TOP,fill=BOTH)
         #buttons
-        fm_buttons=Frame(self.root)
+        fm_buttons=Frame(fm_right)
         self.btn_start=Button(fm_buttons,text="start",command=self.start)
         self.btn_stop=Button(fm_buttons,text="stop",state=DISABLED,command=self.stop)
         self.btn_start.pack(side=LEFT,expand=YES,anchor=E)
         self.btn_stop.pack(side=LEFT,expand=YES,anchor=W)
         fm_buttons.pack(side=TOP,fill=BOTH,pady=10)
         #tab
-        fm_tab=Frame(self.root)
-        self.tabControl=Notebook(fm_tab)
-        self.tabs.set_tabs(self.tabControl)
-        self.tabControl.pack(side=TOP,expand=YES,fill=BOTH)
-        fm_tab.pack(side=TOP,expand=YES,fill=BOTH)
+        fm_config=Frame(fm_right)
+        fm_config.pack(side=TOP,fill=BOTH)
         #quit
-        fm_quit=Frame(self.root)
+        fm_quit=Frame(fm_right)
         Button(fm_quit,text="save").pack(side=RIGHT)
         Button(fm_quit,text="reset").pack(side=RIGHT)
-        fm_quit.pack(side=TOP,fill=BOTH,pady=10)
+        fm_quit.pack(side=BOTTOM,fill=BOTH,pady=10)
 
     def update(self,result):
         #update gui
         #update status
-        fruit_label="fruit:"+self.config['img_config']['fruit']
+        fruit_label="级别："+self.config['img_config']['fruit']
         for i in range(len(self.config['img_config']['points'])):
             self.label_fruit_list[i].config(text=fruit_label)
-            self.label_status_list[i].config(text="status:"+str(result[i]))
+            self.label_status_list[i].config(text="体积："+str(result[0][i]))
+        #update image
+        img=cv2.resize(result[1],(640,200))
+        img=cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
+        img=Image.fromarray(img)
+        img=ImageTk.PhotoImage(image=img)
+        self.label_img.config(image=img)
+        self.label_img.image=img
         #update tabs
-        self.tabs.update()
+        #self.tabs.update()
     def start(self):
         if not (self.app._popen is None):
             self.app.terminate()
