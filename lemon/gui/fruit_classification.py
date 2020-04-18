@@ -25,6 +25,8 @@ class Main_gui:
         #init gui
         self.root=Tk()
         self.tabs=lemon_tab(config)
+        self.fruit=self.config['img_config']['fruit']
+        self.fruit_config=self.config['gui_config']['fruit_config'][self.fruit]
         self.width=self.config['gui_config']['width']
         self.height=self.config['gui_config']['height']
         self.init_gui()
@@ -67,9 +69,19 @@ class Main_gui:
         #tags frame
         fm_tags=Frame(fm_left,pady=250)
         fm_tags.pack(side=TOP,fill=BOTH)
-        Button(fm_tags,width=5,height=1,text="级别",relief=SUNKEN).pack(side=TOP,anchor=E)
-        Button(fm_tags,width=5,height=1,text="重量").pack(side=TOP,anchor=E)
-        Button(fm_tags,width=5,height=1,text="体积").pack(side=TOP,anchor=E)
+        self.btn_list=[]
+        for i in range(len(self.fruit_config)):
+            text_tmp=self.fruit_config[i]
+            btn_tmp=Button(fm_tags,width=5,heigh=1,text=text_tmp)
+            btn_tmp.pack(side=TOP,anchor=E)
+            self.btn_list.append(btn_tmp)
+            if i==0:
+                btn_tmp.config(command=lambda:self.selectTab(0))
+            elif i==1:
+                btn_tmp.config(command=lambda:self.selectTab(1))
+            elif i==2:
+                btn_tmp.config(command=lambda:self.selectTab(2))
+        self.selectTab(0)
         #right frame
         fm_right=Frame(self.root)
         fm_right.pack(side=LEFT,fill=BOTH)
@@ -82,17 +94,17 @@ class Main_gui:
         self.label_img.pack(side=TOP)
         #status
         fm_status=Frame(fm_right)
-        self.label_fruit_list=[]
-        self.label_status_list=[]
+        self.label_level_list=[]
+        self.label_volume_list=[]
         for i in range(len(self.config['img_config']['points'])):
             fm_tmp=Frame(fm_status)
-            label_fruit=Label(fm_tmp,text="级别：")
-            label_status=Label(fm_tmp,text="体积：")
-            label_fruit.pack(side=TOP,expand=YES,anchor=W)
-            label_status.pack(side=TOP,expand=YES,anchor=W)
+            label_level=Label(fm_tmp,text="级别：")
+            label_volume=Label(fm_tmp,text="体积：")
+            label_level.pack(side=TOP,expand=YES,anchor=W)
+            label_volume.pack(side=TOP,expand=YES,anchor=W)
             fm_tmp.pack(side=LEFT,expand=YES,anchor=W)
-            self.label_fruit_list.append(label_fruit)
-            self.label_status_list.append(label_status)
+            self.label_level_list.append(label_level)
+            self.label_volume_list.append(label_volume)
         fm_status.pack(side=TOP,fill=BOTH)
         #buttons
         fm_buttons=Frame(fm_right)
@@ -103,20 +115,30 @@ class Main_gui:
         fm_buttons.pack(side=TOP,fill=BOTH,pady=10)
         #tab
         fm_config=Frame(fm_right)
-        fm_config.pack(side=TOP,fill=BOTH)
+        pwleft=PanedWindow(fm_config,orient=VERTICAL)
+        pwleft.pack(side=LEFT,fill=BOTH,expand=YES)
+        leftframe=LabelFrame(pwleft,text="left pane")
+        pwleft.add(leftframe)
+        pwright=PanedWindow(fm_config,orient=VERTICAL)
+        pwright.pack(side=LEFT,fill=BOTH,expand=YES)
+        rightframe=LabelFrame(pwright,text="right pane")
+        pwright.add(rightframe)
+        fm_config.pack(side=TOP,expand=YES,fill=BOTH)
         #quit
         fm_quit=Frame(fm_right)
-        Button(fm_quit,text="save").pack(side=RIGHT)
-        Button(fm_quit,text="reset").pack(side=RIGHT)
+        self.btn_save=Button(fm_quit,text="save")
+        self.btn_save.pack(side=RIGHT)
+        self.btn_reset=Button(fm_quit,text="reset")
+        self.btn_reset.pack(side=RIGHT)
         fm_quit.pack(side=BOTTOM,fill=BOTH,pady=10)
-
+    #update gui
     def update(self,result):
         #update gui
         #update status
-        fruit_label="级别："+self.config['img_config']['fruit']
+        volume_label="体积："
         for i in range(len(self.config['img_config']['points'])):
-            self.label_fruit_list[i].config(text=fruit_label)
-            self.label_status_list[i].config(text="体积："+str(result[0][i]))
+            self.label_level_list[i].config(text="级别："+str(result[0][i]))
+            self.label_volume_list[i].config(text=volume_label)
         #update image
         img=cv2.resize(result[1],(640,200))
         img=cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
@@ -124,8 +146,14 @@ class Main_gui:
         img=ImageTk.PhotoImage(image=img)
         self.label_img.config(image=img)
         self.label_img.image=img
-        #update tabs
-        #self.tabs.update()
+    #select tabs
+    def selectTab(self,index):
+        for i in range(len(self.btn_list)):
+            if i==index:
+                self.btn_list[i].config(relief=SUNKEN)
+            else:
+                self.btn_list[i].config(relief=RAISED)
+    #start classification
     def start(self):
         if not (self.app._popen is None):
             self.app.terminate()
@@ -133,12 +161,21 @@ class Main_gui:
         self.app.run_app()
         self.btn_start.config(state=DISABLED)
         self.btn_stop.config(state=NORMAL)
+
+        self.btn_save.config(state=DISABLED)
+        self.btn_reset.config(state=DISABLED)
+    #stop classification
     def stop(self):
         self.app.terminate()
         self.btn_start.config(state=NORMAL)
         self.btn_stop.config(state=DISABLED)
+
+        self.btn_save.config(state=NORMAL)
+        self.btn_reset.config(state=NORMAL)
+    #show gui
     def show(self):
         self.root.mainloop()
+    #quit gui
     def quit(self):
         self.stop()
         self.root.quit()

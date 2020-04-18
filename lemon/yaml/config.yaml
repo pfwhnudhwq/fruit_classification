@@ -1,6 +1,10 @@
 app_config: {}
 data_config: {datapath: ../lemon_pic}
 gui_config:
+  fruit_config:
+    apple: [a, b, c, d]
+    lemon: ["\u7EA7\u522B", "\u91CD\u91CF", "\u4F53\u79EF"]
+    passion: ["\u4F53\u79EF", "\u91CD\u91CF"]
   fruit_list: [lemon, apple, passion]
   height: 640
   width: 960

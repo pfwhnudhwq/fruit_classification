@@ -17,9 +17,12 @@ if __name__=="__main__":
     #gui
     result={}
     gui_config={
-            'width':1280,
+            'width':960,
             'height':640,
-            'fruit_list':['lemon','apple','passion']
+            'fruit_list':['lemon','apple','passion'],
+            'fruit_config':{'lemon':['级别','重量','体积'],
+                'apple':['a','b','c','d'],
+                'passion':['体积','重量']}
             }
     #application config
     app_config={
