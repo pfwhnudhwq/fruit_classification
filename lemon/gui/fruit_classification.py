@@ -24,7 +24,6 @@ class Main_gui:
         self.update_app.start()
         #init gui
         self.root=Tk()
-        self.tabs=lemon_tab(config)
         self.fruit=self.config['img_config']['fruit']
         self.fruit_config=self.config['gui_config']['fruit_config'][self.fruit]
         self.width=self.config['gui_config']['width']
@@ -81,7 +80,6 @@ class Main_gui:
                 btn_tmp.config(command=lambda:self.selectTab(1))
             elif i==2:
                 btn_tmp.config(command=lambda:self.selectTab(2))
-        self.selectTab(0)
         #right frame
         fm_right=Frame(self.root)
         fm_right.pack(side=LEFT,fill=BOTH)
@@ -108,27 +106,21 @@ class Main_gui:
         fm_status.pack(side=TOP,fill=BOTH)
         #buttons
         fm_buttons=Frame(fm_right)
-        self.btn_start=Button(fm_buttons,text="start",command=self.start)
-        self.btn_stop=Button(fm_buttons,text="stop",state=DISABLED,command=self.stop)
+        self.btn_start=Button(fm_buttons,text="开始",command=self.start)
+        self.btn_stop=Button(fm_buttons,text="停止",state=DISABLED,command=self.stop)
         self.btn_start.pack(side=LEFT,expand=YES,anchor=E)
         self.btn_stop.pack(side=LEFT,expand=YES,anchor=W)
         fm_buttons.pack(side=TOP,fill=BOTH,pady=10)
         #tab
         fm_config=Frame(fm_right)
-        pwleft=PanedWindow(fm_config,orient=VERTICAL)
-        pwleft.pack(side=LEFT,fill=BOTH,expand=YES)
-        leftframe=LabelFrame(pwleft,text="left pane")
-        pwleft.add(leftframe)
-        pwright=PanedWindow(fm_config,orient=VERTICAL)
-        pwright.pack(side=LEFT,fill=BOTH,expand=YES)
-        rightframe=LabelFrame(pwright,text="right pane")
-        pwright.add(rightframe)
+        self.tabs=lemon_tab(fm_config,self.config)
         fm_config.pack(side=TOP,expand=YES,fill=BOTH)
+        self.selectTab(0)
         #quit
         fm_quit=Frame(fm_right)
-        self.btn_save=Button(fm_quit,text="save")
+        self.btn_save=Button(fm_quit,text="保存")
         self.btn_save.pack(side=RIGHT)
-        self.btn_reset=Button(fm_quit,text="reset")
+        self.btn_reset=Button(fm_quit,text="重置")
         self.btn_reset.pack(side=RIGHT)
         fm_quit.pack(side=BOTTOM,fill=BOTH,pady=10)
     #update gui
@@ -153,6 +145,7 @@ class Main_gui:
                 self.btn_list[i].config(relief=SUNKEN)
             else:
                 self.btn_list[i].config(relief=RAISED)
+        self.tabs.set_index(index)
     #start classification
     def start(self):
         if not (self.app._popen is None):
