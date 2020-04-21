@@ -4,6 +4,7 @@
 # Created Time: 2020年03月30日 星期一 21时27分35秒
 
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import Notebook
 from app import *
 from .tabs import lemon_tab
@@ -45,15 +46,25 @@ class Main_gui:
 
     def init_menu(self):
         menubar=Menu(self.root)
-        menu_file=Menu(menubar,tearoff=False)
-        for item in self.config['gui_config']['fruit_list']:
-            menu_file.add_command(label=item,command=None)
-        menubar.add_cascade(label='fruit',menu=menu_file)
+        menu_set=Menu(menubar,tearoff=False)
+        menubar.add_cascade(label="系统设置",menu=menu_set)
+        menu_set=Menu(menubar,tearoff=False)
+        menubar.add_cascade(label="方案管理",menu=menu_set)
+        menu_set=Menu(menubar,tearoff=False)
+        menubar.add_cascade(label="功能模块",menu=menu_set)
+        menu_set=Menu(menubar,tearoff=False)
+        menubar.add_cascade(label="统计查询",menu=menu_set)
+        menubar.add_command(label="关于",command=self.about)
+        menubar.add_command(label="退出",command=self.quit)
+        #menu_file=Menu(menubar,tearoff=True)
+        #for item in self.config['gui_config']['fruit_list']:
+        #    menu_file.add_command(label=item,command=None)
+        #menubar.add_cascade(label='fruit',menu=menu_file)
 
-        menu_edit=Menu(menubar,tearoff=False)
-        for item in ['fuck','quit']:
-            menu_edit.add_command(label=item,command=self.quit)
-        menubar.add_cascade(label='edit',menu=menu_edit)
+        #menu_edit=Menu(menubar,tearoff=False)
+        #for item in ['fuck','quit']:
+        #    menu_edit.add_command(label=item,command=self.quit)
+        #menubar.add_cascade(label='edit',menu=menu_edit)
         self.root.config(menu=menubar)
 
     def init_compoent(self):
@@ -168,6 +179,9 @@ class Main_gui:
     #show gui
     def show(self):
         self.root.mainloop()
+    #about msg
+    def about(self):
+        messagebox.showinfo("关于","水果分类系统")
     #quit gui
     def quit(self):
         self.stop()
