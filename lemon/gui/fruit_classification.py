@@ -5,9 +5,11 @@
 
 from tkinter import *
 from tkinter import messagebox
+from tkinter.filedialog import *
 from tkinter.ttk import Notebook
 from app import *
 from .tabs import lemon_tab
+from .plan import Plan
 from multiprocessing import Queue
 import cv2
 import numpy as np
@@ -48,12 +50,18 @@ class Main_gui:
         menubar=Menu(self.root)
         menu_set=Menu(menubar,tearoff=False)
         menubar.add_cascade(label="系统设置",menu=menu_set)
-        menu_set=Menu(menubar,tearoff=False)
-        menubar.add_cascade(label="方案管理",menu=menu_set)
-        menu_set=Menu(menubar,tearoff=False)
-        menubar.add_cascade(label="功能模块",menu=menu_set)
-        menu_set=Menu(menubar,tearoff=False)
-        menubar.add_cascade(label="统计查询",menu=menu_set)
+        menu_plan=Menu(menubar,tearoff=False)
+        menu_plan.add_command(label="方案设置",command=self.setPlan)
+        menu_plan.add_command(label="方案读取",command=self.loadPlan)
+        menu_plan.add_command(label="方案保存",command=self.savePlan)
+        menubar.add_cascade(label="方案管理",menu=menu_plan)
+        menu_module=Menu(menubar,tearoff=False)
+        menu_module.add_command(label="分级模块")
+        menu_module.add_command(label="重量模块")
+        menu_module.add_command(label="体积模块")
+        menubar.add_cascade(label="功能模块",menu=menu_module)
+        menu_count=Menu(menubar,tearoff=False)
+        menubar.add_cascade(label="统计查询",menu=menu_count)
         menubar.add_command(label="关于",command=self.about)
         menubar.add_command(label="退出",command=self.quit)
         #menu_file=Menu(menubar,tearoff=True)
@@ -121,6 +129,10 @@ class Main_gui:
         self.btn_stop=Button(fm_buttons,text="停止",state=DISABLED,command=self.stop)
         self.btn_start.pack(side=LEFT,expand=YES,anchor=E)
         self.btn_stop.pack(side=LEFT,expand=YES,anchor=W)
+        self.btn_set=Button(fm_buttons,text="设置",command=None)
+        self.btn_plan=Button(fm_buttons,text="方案",command=self.setPlan)
+        self.btn_set.pack(side=RIGHT,anchor=W)
+        self.btn_plan.pack(side=RIGHT,anchor=W)
         fm_buttons.pack(side=TOP,fill=BOTH,pady=10)
         #tab
         fm_config=Frame(fm_right)
@@ -129,9 +141,9 @@ class Main_gui:
         self.selectTab(0)
         #quit
         fm_quit=Frame(fm_right)
-        self.btn_save=Button(fm_quit,text="保存")
+        self.btn_save=Button(fm_quit,text="保存方案",command=self.savePlan)
         self.btn_save.pack(side=RIGHT)
-        self.btn_reset=Button(fm_quit,text="重置")
+        self.btn_reset=Button(fm_quit,text="读取方案",command=self.loadPlan)
         self.btn_reset.pack(side=RIGHT)
         fm_quit.pack(side=BOTTOM,fill=BOTH,pady=10)
     #update gui
@@ -168,6 +180,10 @@ class Main_gui:
 
         self.btn_save.config(state=DISABLED)
         self.btn_reset.config(state=DISABLED)
+        self.btn_set.config(state=DISABLED)
+        self.btn_plan.config(state=DISABLED)
+
+        self.tabs.start()
     #stop classification
     def stop(self):
         self.app.terminate()
@@ -176,6 +192,19 @@ class Main_gui:
 
         self.btn_save.config(state=NORMAL)
         self.btn_reset.config(state=NORMAL)
+        self.btn_set.config(state=NORMAL)
+        self.btn_plan.config(state=NORMAL)
+        
+        self.tabs.stop()
+    #save plan
+    def savePlan(self):
+        filename=asksaveasfilename()
+    #load plan
+    def loadPlan(self):
+        filename=askopenfilename()
+    #set plan
+    def setPlan(self):
+        self.plan_gui=Plan(self.root,self.config)
     #show gui
     def show(self):
         self.root.mainloop()
