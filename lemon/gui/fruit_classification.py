@@ -27,11 +27,14 @@ class Main_gui:
         self.update_app.start()
         #init gui
         self.root=Tk()
+        self.root.protocol('WM_DELETE_WINDOW', self.quit)
         self.fruit=self.config['img_config']['fruit']
         self.fruit_config=self.config['gui_config']['fruit_config'][self.fruit]
         self.width=self.config['gui_config']['width']
         self.height=self.config['gui_config']['height']
         self.init_gui()
+        
+        self.plan_gui=Plan()
 
     def init_gui(self):
         #main window
@@ -42,13 +45,21 @@ class Main_gui:
         self.init_compoent()
 
     def init_main_window(self):
-        self.root.title("fruit classification")
-        self.root.geometry(str(self.width)+"x"+str(self.height))
+        screenWidth=self.root.winfo_screenwidth()
+        screenHeight=self.root.winfo_screenheight()
+        self.root.title("水果分级：")
+        w=self.width
+        h=self.height
+        x=(screenWidth-w)/2
+        y=(screenHeight-h)/2
+        self.root.geometry("%dx%d+%d+%d"%(w,h,x,y))
         self.root.resizable(width=False,height=False)
 
     def init_menu(self):
         menubar=Menu(self.root)
         menu_set=Menu(menubar,tearoff=False)
+        menu_set.add_command(label="水果切换",command=None)
+        menu_set.add_command(label="设置",command=None)
         menubar.add_cascade(label="系统设置",menu=menu_set)
         menu_plan=Menu(menubar,tearoff=False)
         menu_plan.add_command(label="方案设置",command=self.setPlan)
@@ -204,7 +215,7 @@ class Main_gui:
         filename=askopenfilename()
     #set plan
     def setPlan(self):
-        self.plan_gui=Plan(self.root,self.config)
+        self.plan_gui.show(self.config)
     #show gui
     def show(self):
         self.root.mainloop()
