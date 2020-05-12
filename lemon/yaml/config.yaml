@@ -1,5 +1,5 @@
 app_config: {}
-data_config: {datapath: ../lemon_pic}
+data_config: {datapath: ../images}
 gui_config:
   fruit_config:
     apple: [a, b, c, d]
@@ -10,12 +10,12 @@ gui_config:
   width: 960
 img_config:
   fruit: lemon
-  height: 185
+  height: 175
   points:
-  - !!python/tuple [16, 95]
-  - !!python/tuple [171, 95]
-  - !!python/tuple [326, 95]
-  - !!python/tuple [481, 95]
-  - !!python/tuple [636, 95]
-  - !!python/tuple [791, 95]
-  width: 145
+  - !!python/tuple [0,50]
+  - !!python/tuple [185, 50]
+  - !!python/tuple [370, 50]
+  - !!python/tuple [550, 50]
+  - !!python/tuple [720, 50]
+  - !!python/tuple [900, 50]
+  width: 150

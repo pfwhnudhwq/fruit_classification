@@ -114,7 +114,7 @@ class Main_gui:
         fm_right=Frame(self.root)
         fm_right.pack(side=LEFT,fill=BOTH)
         #image
-        img=np.zeros((200,640),dtype=np.uint8)
+        img=np.zeros((168,640),dtype=np.uint8)
         img=Image.fromarray(img)
         img=ImageTk.PhotoImage(img)
         self.label_img=Label(fm_right,image=img)
@@ -166,7 +166,7 @@ class Main_gui:
             self.label_level_list[i].config(text="级别："+str(result[0][i]))
             self.label_volume_list[i].config(text=volume_label)
         #update image
-        img=cv2.resize(result[1],(640,200))
+        img=cv2.resize(result[1],(640,168))
         img=cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
         img=Image.fromarray(img)
         img=ImageTk.PhotoImage(image=img)
