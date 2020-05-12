@@ -1,5 +1,5 @@
 app_config: {}
-data_config: {datapath: ../images}
+data_config: {datapath: ../../images}
 gui_config:
   fruit_config:
     apple: [a, b, c, d]
